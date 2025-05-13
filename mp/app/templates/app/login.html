@@ -1,0 +1,35 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>App Login</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+  <script src="{% static 'js/main.js' %}" defer></script>
+</head>
+<body id="loginBody">
+  <div id="container">
+    <div id="form-box">
+      <h1 id="app-title">thrift_bratz</h1>
+
+      {% csrf_token %}
+      <label id="email-label" for="email">Email</label>
+      <div id="email-field">
+        <img id="email-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjQTJERDAwIiBkPSJNMjAgNEg0Yy0xLjEgMC0xLjk5LjktMS45OSAyTDIgMThjMCAxLjEuOSAyIDIgMmgxNmMxLjEgMCAyLS45IDItMlY2YzAtMS4xLS45LTItMi0ybTAgNGwtOCA1bC04LTVWNmw4IDVsOC01eiIvPjwvc3ZnPg==" alt="email">
+        <input type="email" id="email" placeholder="Email">
+      </div>
+
+      <label id="password-label" for="password">Password</label>
+      <div id="password-field">
+        <img id="password-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48cGF0aCBmaWxsPSIjQTJERDAwIiBkPSJNMjEgMmE4Ljk5OCA4Ljk5OCAwIDAgMC04LjYxMiAxMS42MTJMMiAyNHY2aDZsMTAuMzg4LTEwLjM4OEE5IDkgMCAxIDAgMjEgMm0wIDE2YTcgNyAwIDAgMS0yLjAzMi0uMzAybC0xLjE0Ny0uMzQ4bC0uODQ3Ljg0N2wtMy4xODEgMy4xODFMMTIuNDE0IDIwTDExIDIxLjQxNGwxLjM3OSAxLjM3OWwtMS41ODYgMS41ODZMOS40MTQgMjNMOCAyNC40MTRsMS4zNzkgMS4zNzlMNy4xNzIgMjhINHYtMy4xNzJsOS44MDItOS44MDJsLjg0OC0uODQ3bC0uMzQ4LTEuMTQ3QTcgNyAwIDEgMSAyMSAxOCIvPjxjaXJjbGUgY3g9IjIyIiBjeT0iMTAiIHI9IjIiIGZpbGw9IiNBMkREMDAiLz48L3N2Zz4=" alt="password">
+        <input type="password" id="password" placeholder="Password">
+      </div>
+
+      <button id="login-btn">Log In</button>
+      <p id="or-text">or</p>
+      <button id="signup-btn" onclick="window.location.href='{% url 'signup' %}'">Sign Up</button>
+    </div>
+  </div>
+</body>
+</html>
