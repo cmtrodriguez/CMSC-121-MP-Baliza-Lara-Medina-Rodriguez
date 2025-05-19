@@ -2,16 +2,192 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Buyer Dashboard</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    <script src="{% static 'js/main.js' %}" defer></script>
     <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {% csrf_token %}
+
+    <style>
+        .products {
+            display: flex;
+            justify-content: center;
+            margin-top: 16px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 0 20px 0;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+            height: auto;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            display: block;
+        }
+
+        .product-info {
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #222;
+            margin-bottom: 2px;
+            margin-left: 2px;
+        }
+
+        .product-price {
+            color: #4CAF50;
+            font-size: 16px;
+            font-weight: bold;
+            margin-left: 2px;
+            margin-bottom: 8px;
+        }
+
+        .product-description {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .add-to-cart-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: #45a049;
+        }
+
+        .cart-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .cart-btn:hover {
+            background-color: #45a049;
+        }
+
+        .filter-section {
+            padding: 10px 0 0 0;
+            margin: 20px 0 0 0;
+        }
+
+        .filter-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #006400;
+            border-radius: 8px;
+            padding: 8px 18px;
+            width: 100%;
+            box-sizing: border-box;
+            gap: 24px;
+        }
+
+        .search-input {
+            flex: 2 1 0;
+            padding: 4px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 15px;
+            background-color: white;
+            height: 32px;
+            margin-right: 0;
+            min-width: 180px;
+            max-width: 350px;
+        }
+
+        .filter-label {
+            color: #fff;
+            font-size: 16px;
+            margin-right: 4px;
+        }
+
+        .filter-select {
+            padding: 4px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 15px;
+            min-width: 120px;
+            background-color: white;
+            height: 32px;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.2);
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @media (max-width: 900px) {
+            .filter-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+
+            .search-input {
+                max-width: 100%;
+            }
+        }
+    </style>
 </head>
+
 <body>
-        <!-- Sidebar Menu -->
+    <!-- Sidebar Menu -->
     <div id="sideMenu" class="side-menu">
         <button class="close-btn" onclick="closeMenu()">&times;</button>
         <a href="{% url 'role_page' %}">Change Role</a>
@@ -28,16 +204,17 @@
                 </button>
             </div>
             <div class="search-bar">
-                <form id="searchForm" onsubmit="return searchProducts(event)">
-                    <input type="text" id="searchInput" placeholder="Search" />
-                </form>
+                <input type="text" placeholder="Search" id="searchInput" onkeyup="filterProducts()" />
             </div>
             <div class="icons">
-                <a href="{% url 'cart_page' %}">
+                <a href="{% url 'cart' %}">
                     <button class="cart">
                         <span class="iconify" data-icon="mdi:cart" data-inline="false"></span>
                     </button>
                 </a>
+                <button class="message" onclick="toggleNotifications()">
+                    <span class="iconify" data-icon="mdi:message" data-inline="false"></span>
+                </button>
                 <button class="home" onclick="toggleHome()">
                     <span class="iconify" data-icon="ic:baseline-home" data-inline="false"></span>
                 </button>
@@ -47,106 +224,143 @@
         <main>
             <!-- Welcome Section -->
             <section class="welcome">
-                <p><a href="profile.html" class="username">Welcome, <span id="userName">Name</span>!</a></p>
+                <p><a href="profile.html" class="username">Welcome, {{ request.user.first_name }}!</a></p>
                 <p><b>Role: Buyer</b></p>
             </section>
-            
+
             <!-- Filter Section -->
             <section class="filter-section">
-                <!-- Price Range Filter (left side) -->
-                <div class="filter-left">
-                    <label for="price-range">Price Range:</label>
-                    <select id="price-range" onchange="filterByPrice()">
-                        <option value="0-100">0 - 100</option>
-                        <option value="100-200">100 - 200</option>
-                        <option value="200-500">200 - 500</option>
-                        <option value="500-1000">500 - 1000</option>
-                    </select>
-                </div>
-
-                <!-- Category Filter (right side) -->
-                <div class="filter-right">
-                    <label for="category-filter">Category:</label>
-                    <select id="category-filter" onchange="filterByCategory()">
-                        <option value="all">All</option>
-                        <option value="pajamas">Pajamas</option>
-                        <option value="jeans">Jeans</option>
-                        <option value="shorts">Shorts</option>
-                        <option value="shirts">Shirts</option>
-                    </select>
+                <div class="filter-container">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search products...">
+                    <div class="filter-group">
+                        <label class="filter-label" for="price-range">Price Range:</label>
+                        <select id="price-range" class="filter-select">
+                            <option value="">All Prices</option>
+                            <option value="0-100">0 - 100</option>
+                            <option value="100-200">100 - 200</option>
+                            <option value="200-500">200 - 500</option>
+                            <option value="500-1000">500 - 1000</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label" for="categoryFilter">Category:</label>
+                        <select id="categoryFilter" class="filter-select">
+                            <option value="">All</option>
+                            <option value="pajamas">Pajamas</option>
+                            <option value="jeans">Jeans</option>
+                            <option value="shorts">Shorts</option>
+                            <option value="shirts">Shirts</option>
+                        </select>
+                    </div>
                 </div>
             </section>
 
 
             <!-- Products Section -->
-            <section class="products">
-                <!-- Product 1 -->
-                <div class="product" id="product-ball" data-category="shorts" data-price="30">
-                    <div class="image"></div>
-                    <p id="product-name-product-ball">Ball</p>
-                    <p id="product-price-product-ball">Php 30.00</p>
-                    <div class="product-buttons">
-                        <button class="add-cart-btn" onclick="addToCart('product-ball')">Add to Cart</button>
-                        <button class="checkout-btn" onclick="checkoutProduct('product-ball')">Checkout</button>
+            <section class="products" id="products-container">
+                <div class="product-grid" id="productGrid">
+                    {% for product in products %}
+                    <div class="product-card" data-category="{{ product.category }}">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                        {% else %}
+                        <div class="product-image"
+                            style="background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                            <span class="iconify" data-icon="mdi:image-off"
+                                style="font-size: 48px; color: #666;"></span>
+                        </div>
+                        {% endif %}
+                        <div class="product-info">
+                            <div class="product-name">{{ product.name }}</div>
+                            <div class="product-price">Php {{ product.price }}</div>
+                            <div class="product-description">{{ product.description }}</div>
+                            <div class="product-actions">
+                                <button class="add-to-cart-btn" onclick="addToCart({{ product.id }})">Add to
+                                    Cart</button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-
-                <!-- Product 2 -->
-                <div class="product" id="product-product2" data-category="jeans" data-price="120">
-                    <div class="image"></div>
-                    <p id="product-name-product-product2">Product 2</p>
-                    <p id="product-price-product-product2">Php 120.00</p>
-                    <div class="product-buttons">
-                        <button class="add-cart-btn" onclick="addToCart('product-product2')">Add to Cart</button>
-                        <button class="checkout-btn" onclick="checkoutProduct('product-product2')">Checkout</button>
-                    </div>
-                </div>
-
-                <!-- Product 3 -->
-                <div class="product" id="product-product3" data-category="shirts" data-price="150">
-                    <div class="image"></div>
-                    <p id="product-name-product-product3">Product 3</p>
-                    <p id="product-price-product-product3">Php 150.00</p>
-                    <div class="product-buttons">
-                        <button class="add-cart-btn" onclick="addToCart('product-product3')">Add to Cart</button>
-                        <button class="checkout-btn" onclick="checkoutProduct('product-product3')">Checkout</button>
-                    </div>
-                </div>
-
-                <!-- Product 4 -->
-                <div class="product" id="product-product4" data-category="pajamas" data-price="180">
-                    <div class="image"></div>
-                    <p id="product-name-product-product4">Product 4</p>
-                    <p id="product-price-product-product4">Php 180.00</p>
-                    <div class="product-buttons">
-                        <button class="add-cart-btn" onclick="addToCart('product-product4')">Add to Cart</button>
-                        <button class="checkout-btn" onclick="checkoutProduct('product-product4')">Checkout</button>
-                    </div>
-                </div>
-
-                <!-- Product 5 -->
-                <div class="product" id="product-product5" data-category="jeans" data-price="220">
-                    <div class="image"></div>
-                    <p id="product-name-product-product5">Product 5</p>
-                    <p id="product-price-product-product5">Php 220.00</p>
-                    <div class="product-buttons">
-                        <button class="add-cart-btn" onclick="addToCart('product-product5')">Add to Cart</button>
-                        <button class="checkout-btn" onclick="checkoutProduct('product-product5')">Checkout</button>
-                    </div>
-                </div>
-
-                <!-- Product 6 -->
-                <div class="product" id="product-product6" data-category="shorts" data-price="300">
-                    <div class="image"></div>
-                    <p id="product-name-product-product6">Product 6</p>
-                    <p id="product-price-product-product6">Php 300.00</p>
-                    <div class="product-buttons">
-                        <button class="add-cart-btn" onclick="addToCart('product-product6')">Add to Cart</button>
-                        <button class="checkout-btn" onclick="checkoutProduct('product-product6')">Checkout</button>
-                    </div>
+                    {% endfor %}
                 </div>
             </section>
         </main>
     </div>
+
+    <script>
+        // Function to open the sidebar
+        function openMenu() {
+            document.getElementById("sideMenu").style.width = "250px";
+        }
+
+        // Function to close the sidebar
+        function closeMenu() {
+            document.getElementById("sideMenu").style.width = "0";
+        }
+
+        // Function to filter products
+        function filterProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const priceRange = document.getElementById('price-range').value;
+            const products = document.querySelectorAll('.product-card');
+
+            products.forEach(product => {
+                const name = product.querySelector('.product-name').textContent.toLowerCase();
+                const productCategory = product.dataset.category;
+                const price = parseFloat(product.querySelector('.product-price').textContent.replace('Php ', ''));
+
+                const matchesSearch = name.includes(searchTerm);
+                const matchesCategory = !category || productCategory === category;
+
+                let matchesPrice = true;
+                if (priceRange) {
+                    const [min, max] = priceRange.split('-').map(Number);
+                    matchesPrice = price >= min && price <= max;
+                }
+
+                product.style.display = matchesSearch && matchesCategory && matchesPrice ? 'flex' : 'none';
+            });
+        }
+
+        document.getElementById('searchInput').addEventListener('input', filterProducts);
+        document.getElementById('categoryFilter').addEventListener('change', filterProducts);
+        document.getElementById('price-range').addEventListener('change', filterProducts);
+
+        // Function to add product to cart
+        function addToCart(productId) {
+            console.log('Adding product to cart:', productId);
+
+            $.ajax({
+                url: `/cart/add/${productId}/`,
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    console.log('Add to cart response:', response);
+                    if (response.status === 'success') {
+                        alert('Product added to cart!');
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Add to cart error:', error);
+                    alert('Error occurred while adding product to cart');
+                }
+            });
+        }
+
+        // Function to toggle notifications (placeholder)
+        function toggleNotifications() {
+            alert('Notifications feature coming soon!');
+        }
+
+        // Function to toggle home (placeholder)
+        function toggleHome() {
+            window.location.href = "{% url 'buyer' %}";
+        }
+    </script>
 </body>
+
 </html>

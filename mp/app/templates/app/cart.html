@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,8 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
     <script src="{% static 'js/main.js' %}" defer></script>
-    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <style>
         .back-icon {
             font-size: 30px;
@@ -27,7 +29,7 @@
         }
 
         .product-container {
-            background: rgba(255, 255, 255, 0.6); /* White transparent gradient */
+            background: rgba(255, 255, 255, 0.6);
             border-radius: 15px;
             padding: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -38,11 +40,11 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-color: #00FF00; /* Lime green background */
+            background-color: #00FF00;
             padding: 15px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            margin-bottom: 15px; /* Adds space between products */
+            margin-bottom: 15px;
         }
 
         .cart-item span {
@@ -77,7 +79,7 @@
 
         .remove-btn {
             padding: 10px;
-            background-color: #FF3366; /* Red for remove */
+            background-color: #FF3366;
             color: white;
             border: none;
             border-radius: 10px;
@@ -112,16 +114,15 @@
             margin-top: 50px;
         }
 
-        /* Modal Styles */
         #removeModal {
-            display: none; /* Hidden by default */
+            display: none;
             position: fixed;
-            z-index: 1; /* Sit on top */
+            z-index: 1;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Black with transparency */
+            background-color: rgba(0, 0, 0, 0.5);
         }
 
         #removeModalContent {
@@ -153,8 +154,8 @@
 
         .headerCart {
             display: flex;
-            justify-content: center; 
-            align-items: center; 
+            justify-content: center;
+            align-items: center;
             padding: 20px;
             color: black;
             text-transform: lowercase;
@@ -162,50 +163,56 @@
             font-weight: bold;
             letter-spacing: 5px;
             font-family: Arial, sans-serif;
-            width: 100%; /* Ensures it takes full width */
+            width: 100%;
+        }
+
+        .cart-total {
+            text-align: right;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
         }
     </style>
 </head>
+
 <body id="BodyCart">
-    <a href="/buyer">  
+    <a href="{% url 'buyer' %}">
         <button class="back-icon">
-            <span class="iconify" data-icon="material-symbols:arrow-back" data-inline="false"></span> <!-- Iconify icon -->
+            <span class="iconify" data-icon="material-symbols:arrow-back" data-inline="false"></span>
         </button>
     </a>
 
     <div class="headerCart">
         <div id="nameCart">Cart</div>
-        <div></div> 
     </div>
 
     <div class="cart-content" id="cart-items">
         <div class="product-container" id="cart-items-container">
-            <!-- Example Product 1 -->
-            <div id="product-1" class="cart-item">
-                <span>Product 1</span>
+            {% if cart_items %}
+            {% for item in cart_items %}
+            <div id="product-{{ item.product.id }}" class="cart-item">
+                <span>{{ item.product.name }}</span>
                 <div class="quantity-container">
-                    <button class="quantity-btn" onclick="decreaseQuantity(1)">-</button>
-                    <input type="number" class="quantity-input" id="quantity-1" value="1" min="1" readonly>
-                    <button class="quantity-btn" onclick="increaseQuantity(1)">+</button>
+                    <button class="quantity-btn" onclick="decreaseQuantity({{ item.product.id }})">-</button>
+                    <input type="number" class="quantity-input" id="quantity-{{ item.product.id }}"
+                        value="{{ item.quantity }}" min="1" readonly>
+                    <button class="quantity-btn" onclick="increaseQuantity({{ item.product.id }})">+</button>
                 </div>
-                <span>$30.00</span>
-                <button class="remove-btn" onclick="openRemoveModal(1)">Remove</button>
+                <span>Php {{ item.product.price }}</span>
+                <button class="remove-btn" onclick="openRemoveModal({{ item.product.id }})">Remove</button>
             </div>
-
-            <!-- Example Product 2 -->
-            <div id="product-2" class="cart-item">
-                <span>Product 2</span>
-                <div class="quantity-container">
-                    <button class="quantity-btn" onclick="decreaseQuantity(2)">-</button>
-                    <input type="number" class="quantity-input" id="quantity-2" value="1" min="1" readonly>
-                    <button class="quantity-btn" onclick="increaseQuantity(2)">+</button>
-                </div>
-                <span>$20.00</span>
-                <button class="remove-btn" onclick="openRemoveModal(2)">Remove</button>
+            {% endfor %}
+            <div class="cart-total">
+                Total: Php <span id="cart-total">{{ total }}</span>
             </div>
+            <button class="checkout-btn2" onclick="saveCartAndProceed()">Proceed to Checkout</button>
+            {% else %}
+            <div class="empty-cart-message">Your cart is empty</div>
+            {% endif %}
         </div>
-
-        <button class="checkout-btn2" onclick="saveCartAndProceed()">Proceed to Checkout</button>
     </div>
 
     <!-- Custom Remove Confirmation Modal -->
@@ -216,5 +223,92 @@
             <button class="modal-btn2" onclick="closeRemoveModal()">No, Keep</button>
         </div>
     </div>
+
+    <script>
+        let productToRemove = null;
+
+        function openRemoveModal(productId) {
+            productToRemove = productId;
+            document.getElementById('removeModal').style.display = 'block';
+        }
+
+        function closeRemoveModal() {
+            document.getElementById('removeModal').style.display = 'none';
+            productToRemove = null;
+        }
+
+        function removeProduct() {
+            if (productToRemove) {
+                $.ajax({
+                    url: `/cart/remove/${productToRemove}/`,
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        if (response.status === 'success') {
+                            location.reload();
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function () {
+                        alert('Error occurred while removing product');
+                    }
+                });
+            }
+            closeRemoveModal();
+        }
+
+        function increaseQuantity(productId) {
+            $.ajax({
+                url: `/cart/update/${productId}/`,
+                type: 'POST',
+                data: {
+                    'quantity': parseInt($(`#quantity-${productId}`).val()) + 1,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    if (response.status === 'success') {
+                        location.reload();
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function () {
+                    alert('Error occurred while updating quantity');
+                }
+            });
+        }
+
+        function decreaseQuantity(productId) {
+            const currentQuantity = parseInt($(`#quantity-${productId}`).val());
+            if (currentQuantity > 1) {
+                $.ajax({
+                    url: `/cart/update/${productId}/`,
+                    type: 'POST',
+                    data: {
+                        'quantity': currentQuantity - 1,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        if (response.status === 'success') {
+                            location.reload();
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function () {
+                        alert('Error occurred while updating quantity');
+                    }
+                });
+            }
+        }
+
+        function saveCartAndProceed() {
+            window.location.href = "{% url 'checkout_page' %}";
+        }
+    </script>
 </body>
+
 </html>

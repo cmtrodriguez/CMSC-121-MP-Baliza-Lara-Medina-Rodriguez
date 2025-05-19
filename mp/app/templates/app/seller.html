@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,9 +10,76 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     <script src="{% static 'js/main.js' %}" defer></script>
     <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .product {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin-bottom: 20px;
+            width: 350px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .product .image {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            margin-bottom: 10px;
+        }
+
+        .product .image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 5px;
+            display: block;
+        }
+
+        .product .edit-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #006400cc;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .product .edit-btn .iconify {
+            color: #fff;
+            font-size: 20px;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #222;
+            margin-bottom: 2px;
+            margin-left: 2px;
+        }
+
+        .product-price {
+            color: #4CAF50;
+            font-size: 16px;
+            font-weight: bold;
+            margin-left: 2px;
+            margin-bottom: 8px;
+        }
+    </style>
 </head>
+
 <body>
-        <!-- Sidebar Menu -->
+    <!-- Sidebar Menu -->
     <div id="sideMenu" class="side-menu">
         <button class="close-btn" onclick="closeMenu()">&times;</button>
         <a href="{% url 'role_page' %}">Change Role</a>
@@ -27,12 +95,12 @@
                 </button>
             </div>
             <div class="search-bar">
-                <input type="text" placeholder="Search" />
+                <input type="text" placeholder="Search" id="searchInput" onkeyup="filterProducts()" />
             </div>
             <div class="icons">
-                    <button class="message" onclick="toggleNotifications()">
-                        <span class="iconify" data-icon="mdi:message" data-inline="false"></span>
-                    </button>
+                <button class="message" onclick="toggleNotifications()">
+                    <span class="iconify" data-icon="mdi:message" data-inline="false"></span>
+                </button>
                 <button class="home" onclick="toggleHome()">
                     <span class="iconify" data-icon="ic:baseline-home" data-inline="false"></span>
                 </button>
@@ -40,9 +108,9 @@
         </header>
 
         <main>
-            <section class="welcome" font-size="40px">
-                <p><a href="profile.html" class="username">Welcome, <span id="userName">Name</span>!</a></p>
-                <p font-size="40px"><b>Role: Seller</b></p>
+            <section class="welcome">
+                <p><a href="profile.html" class="username">Welcome, {{ request.user.first_name }}!</a></p>
+                <p><b>Role: Seller</b></p>
             </section>
 
             <!-- Category Filter and Add Product Button -->
@@ -60,61 +128,22 @@
                 </div>
             </section>
 
-            <section class="products">
-                <!-- Product 1 -->
-                <div class="product" id="product-ball" data-category="shorts">
-                    <div class="image"></div>
-                    <button class="edit-btn" onclick="openEditProductModal('Product 1', 30.00, 'product-product1')">
-                        <span class="iconify" data-icon="mdi:pencil" style="font-size: 24px;"></span>
-                    </button>
-                    <p id="product-name-product-ball">Ball</p>
-                    <p id="product-price-product-ball">Php 30.00</p>
+            <section class="products" id="products-container">
+                {% for product in products %}
+                <div class="product" id="product-{{ product.id }}" data-category="{{ product.category }}">
+                    <div class="image">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% endif %}
+                        <button class="edit-btn"
+                            onclick="openEditProductModal('{{ product.id }}', '{{ product.name }}', '{{ product.price }}', '{{ product.category }}')">
+                            <span class="iconify" data-icon="mdi:pencil"></span>
+                        </button>
+                    </div>
+                    <div class="product-name">{{ product.name }}</div>
+                    <div class="product-price">Php {{ product.price }}</div>
                 </div>
-                <!-- Product 2 -->
-                <div class="product" id="product-product2" data-category="jeans">
-                    <div class="image"></div>
-                    <button class="edit-btn" onclick="openEditProductModal('Product 2', 40.00, 'product-product2')">
-                        <span class="iconify" data-icon="mdi:pencil" style="font-size: 24px;"></span>
-                    </button>
-                    <p id="product-name-product-product2">Product 2</p>
-                    <p id="product-price-product-product2">Php 40.00</p>
-                </div>
-                <!-- Product 3 -->
-                <div class="product" id="product-product3" data-category="shirts">
-                    <div class="image"></div>
-                    <button class="edit-btn" onclick="openEditProductModal('Product 3', 50.00, 'product-product3')">
-                        <span class="iconify" data-icon="mdi:pencil" style="font-size: 24px;"></span>
-                    </button>
-                    <p id="product-name-product-product3">Product 3</p>
-                    <p id="product-price-product-product3">Php 50.00</p>
-                </div>
-                <!-- Product 4 -->
-                <div class="product" id="product-product4" data-category="pajamas">
-                    <div class="image"></div>
-                    <button class="edit-btn" onclick="openEditProductModal('Product 4', 60.00, 'product-product4')">
-                        <span class="iconify" data-icon="mdi:pencil" style="font-size: 24px;"></span>
-                    </button>
-                    <p id="product-name-product-product4">Product 4</p>
-                    <p id="product-price-product-product4">Php 60.00</p>
-                </div>
-                <!-- Product 5 -->
-                <div class="product" id="product-product5" data-category="pajamas">
-                    <div class="image"></div>
-                    <button class="edit-btn" onclick="openEditProductModal('Product 5', 70.00, 'product-product5')">
-                        <span class="iconify" data-icon="mdi:pencil" style="font-size: 24px;"></span>
-                    </button>
-                    <p id="product-name-product-product5">Product 5</p>
-                    <p id="product-price-product-product5">Php 70.00</p>
-                </div>
-                <!-- Product 6 -->
-                <div class="product" id="product-product6" data-category="shorts">
-                    <div class="image"></div>
-                    <button class="edit-btn" onclick="openEditProductModal('Product 6', 80.00, 'product-product6')">
-                        <span class="iconify" data-icon="mdi:pencil" style="font-size: 24px;"></span>
-                    </button>
-                    <p id="product-name-product-product6">Product 6</p>
-                    <p id="product-price-product-product6">Php 80.00</p>
-                </div>
+                {% endfor %}
             </section>
         </main>
     </div>
@@ -123,32 +152,33 @@
     <div id="addProductModal" class="modal" style="display: none;">
         <div class="modal-content">
             <span class="close-btn" onclick="closeAddProductModal()">&times;</span>
-            
+
             <h2>Add New Product</h2>
-            <form id="addProductForm">
+            <form id="addProductForm" enctype="multipart/form-data">
+                {% csrf_token %}
                 <label for="add-product-name">Product Name</label>
-                <input type="text" id="add-product-name" name="product-name" required />
+                <input type="text" id="add-product-name" name="name" required />
+
                 <label for="add-product-price">Product Price</label>
-                <input type="number" step="0.01" id="add-product-price" name="product-price" required />
-                
-                <!-- Product Category Dropdown -->
+                <input type="number" step="0.01" id="add-product-price" name="price" required />
+
                 <label for="add-product-category">Category</label>
-                <select id="add-product-category" name="product-category" required>
+                <select id="add-product-category" name="category" required>
                     <option value="pajamas">Pajamas</option>
                     <option value="jeans">Jeans</option>
                     <option value="shorts">Shorts</option>
                     <option value="shirts">Shirts</option>
                 </select>
-                
-                <!-- Product Image Upload -->
+
                 <label for="add-product-image">Product Image</label>
-                <input type="file" id="add-product-image" name="product-image" accept="image/*" onchange="previewImage(event)" />
-                
-                <!-- Image Preview -->
+                <input type="file" id="add-product-image" name="image" accept="image/*"
+                    onchange="previewImage(event, 'add')" />
+
                 <div id="add-image-preview-container" style="display:none;">
-                    <img id="add-image-preview" src="" alt="Image Preview" style="width: 100%; max-height: 300px; object-fit: contain;"/>
+                    <img id="add-image-preview" src="" alt="Image Preview"
+                        style="width: 100%; max-height: 300px; object-fit: contain;" />
                 </div>
-                
+
                 <div class="modal-actions">
                     <button class="save-btn" type="submit">Save Product</button>
                 </div>
@@ -160,66 +190,79 @@
     <div id="editProductModal" class="modal" style="display: none;">
         <div class="modal-content">
             <span class="close-btn" onclick="closeEditProductModal()">&times;</span>
-            
+
             <h2>Edit Product</h2>
-            <form id="editForm">
-                <label for="product-name">Product Name</label>
-                <input type="text" id="product-name" name="product-name" required />
-                <label for="product-price">Product Price</label>
-                <input type="number" step="0.01" id="product-price" name="product-price" required />
-                
-                <!-- Product Category Dropdown -->
-                <label for="product-category">Category</label>
-                <select id="product-category" name="product-category" required>
+            <form id="editProductForm" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" id="edit-product-id" name="product_id" />
+
+                <label for="edit-product-name">Product Name</label>
+                <input type="text" id="edit-product-name" name="name" required />
+
+                <label for="edit-product-price">Product Price</label>
+                <input type="number" step="0.01" id="edit-product-price" name="price" required />
+
+                <label for="edit-product-category">Category</label>
+                <select id="edit-product-category" name="category" required>
                     <option value="pajamas">Pajamas</option>
                     <option value="jeans">Jeans</option>
                     <option value="shorts">Shorts</option>
                     <option value="shirts">Shirts</option>
                 </select>
-                
-                <!-- Product Image Upload -->
-                <label for="product-image">Product Image</label>
-                <input type="file" id="product-image" name="product-image" accept="image/*" onchange="previewImage(event)" />
-                
-                <!-- Image Preview -->
-                <div id="image-preview-container" style="display:none;">
-                    <img id="image-preview" src="" alt="Image Preview" style="width: 100%; max-height: 300px; object-fit: contain;"/>
+
+                <label for="edit-product-image">Product Image</label>
+                <input type="file" id="edit-product-image" name="image" accept="image/*"
+                    onchange="previewImage(event, 'edit')" />
+
+                <div id="edit-image-preview-container" style="display:none;">
+                    <img id="edit-image-preview" src="" alt="Image Preview"
+                        style="width: 100%; max-height: 300px; object-fit: contain;" />
                 </div>
-                
+
                 <div class="modal-actions">
                     <button class="save-btn" type="submit">Save Changes</button>
                 </div>
             </form>
             <div>
-                <!-- Delete Button -->
-                <button class="delete-btn" onclick="deleteProduct()">Delete Product</button>
+                <button class="delete-btn" onclick="deleteSellerProduct()">Delete Product</button>
             </div>
         </div>
     </div>
 
     <script>
+        // Function to preview image before upload
+        function previewImage(event, type) {
+            const preview = document.getElementById(type + '-image-preview');
+            const container = document.getElementById(type + '-image-preview-container');
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    container.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
         // Function to open the modal for adding a new product
         function openAddProductModal() {
-          
             document.getElementById('addProductForm').reset();
             document.getElementById('add-image-preview-container').style.display = 'none';
-            
-            // Show the add product modal
             document.getElementById('addProductModal').style.display = 'block';
         }
 
         // Function to open the modal for editing a product
-        function openEditProductModal(productName, productPrice, productId) {
+        function openEditProductModal(productId, name, price, category) {
+            document.getElementById('edit-product-id').value = productId;
+            document.getElementById('edit-product-name').value = name;
+            document.getElementById('edit-product-price').value = price;
+            document.getElementById('edit-product-category').value = category;
 
-            // Set modal title and button text for editing
+            document.getElementById('editProductForm').reset();
+            document.getElementById('edit-image-preview-container').style.display = 'none';
             document.getElementById('editProductModal').style.display = 'block';
-            document.querySelector('#editProductModal h2').innerText = 'Edit Product';
-            document.querySelector('.save-btn').innerText = 'Save Changes';
-            document.querySelector('.delete-btn').style.display = 'inline-block';  
-
-            // Set the product details for editing
-            document.getElementById('product-name').value = productName;
-            document.getElementById('product-price').value = productPrice;
         }
 
         // Close the "Add Product" modal
@@ -232,13 +275,100 @@
             document.getElementById('editProductModal').style.display = 'none';
         }
 
-        // Function to delete a product (for editing mode only)
-        function deleteProduct() {
+        // Function to filter products
+        function filterProducts() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('category-filter').value;
+            const products = document.getElementsByClassName('product');
 
-            // Add logic to delete the product here
-            console.log("Product deleted.");
-            closeEditProductModal(); 
+            for (let product of products) {
+                const name = product.querySelector('.product-name').textContent.toLowerCase();
+                const category = product.dataset.category;
+                const matchesSearch = name.includes(searchText);
+                const matchesCategory = categoryFilter === 'all' || category === categoryFilter;
+
+                product.style.display = matchesSearch && matchesCategory ? 'block' : 'none';
+            }
+        }
+
+        // Handle add product form submission
+        $('#addProductForm').on('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            $.ajax({
+                url: '{% url "add_product" %}',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status === 'success') {
+                        location.reload();
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function () {
+                    alert('Error occurred while adding product');
+                }
+            });
+        });
+
+        // Handle edit product form submission
+        $('#editProductForm').on('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const productId = document.getElementById('edit-product-id').value;
+
+            $.ajax({
+                url: `/product/${productId}/edit/`,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status === 'success') {
+                        location.reload();
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function () {
+                    alert('Error occurred while updating product');
+                }
+            });
+        });
+
+        // Function to delete a product
+        function deleteSellerProduct() {
+            console.log('Delete clicked'); // Debug log
+            if (!confirm('Are you sure you want to delete this product?')) {
+                return;
+            }
+
+            const productId = document.getElementById('edit-product-id').value;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            $.ajax({
+                url: `/product/${productId}/delete/`,
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': csrfToken
+                },
+                success: function (response) {
+                    if (response.status === 'success') {
+                        location.reload();
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function () {
+                    alert('Error occurred while deleting product');
+                }
+            });
         }
     </script>
 </body>
+
 </html>

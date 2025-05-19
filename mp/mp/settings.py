@@ -78,11 +78,10 @@ WSGI_APPLICATION = 'mp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'thrift',
+        'NAME': 'CMSC121MP',
         'USER': 'postgres',
-        'PASSWORD': 'bluxtian',
+        'PASSWORD': '1234',
         'HOST': 'localhost',
-        'PORT': '5432',
     }
 }
 
