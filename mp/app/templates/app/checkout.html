@@ -216,8 +216,9 @@
         <div class="payment-container">
             <h3>Choose Payment Method</h3>
             <div class="payment-options">
-                <button class="payment-method" onclick="selectPaymentMethod('COD')">Cash on Delivery</button>
-                <button class="payment-method" onclick="selectPaymentMethod('GCASH')">GCASH</button>
+                <button class="payment-method" type="button" onclick="selectPaymentMethod('COD')">Cash on
+                    Delivery</button>
+                <button class="payment-method" type="button" onclick="selectPaymentMethod('GCASH')">GCASH</button>
             </div>
 
             <br>
@@ -226,17 +227,16 @@
             </br>
         </div>
 
-        <button class="checkout-btn" onclick="completePayment()">Complete Payment</button>
+        <form method="post" style="text-align:center;">
+            {% csrf_token %}
+            <button class="checkout-btn" type="submit">Complete Payment</button>
+        </form>
     </div>
     <script>
-        function completePayment() {
-            // Notify the user that the payment is completed
-            alert("Payment Completed! Redirecting to the Buyer Page.");
-
-            // Redirect the user to the buyer page after a short delay
-            setTimeout(function () {
-                window.location.href = '/buyer';  // Redirect to the buyer page
-            }, 2000); // 2-second delay to allow the user to see the notification
+        function selectPaymentMethod(method) {
+            // Optionally, you can store the selected payment method in a hidden input if needed
+            // document.getElementById('payment-method').value = method;
+            alert('Selected payment method: ' + method);
         }
     </script>
 </body>

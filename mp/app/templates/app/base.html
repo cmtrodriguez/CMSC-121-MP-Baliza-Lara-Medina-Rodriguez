@@ -1,0 +1,19 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Seller Dashboard{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body style="background: #b6e900; min-height: 100vh; margin: 0;">
+  <div class="container">
+    {% block content %}{% endblock %}
+  </div>
+</body>
+
+</html>

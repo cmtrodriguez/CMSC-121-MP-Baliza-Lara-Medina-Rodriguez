@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from .models import Product
+from .models import Product, Order
 from django.core.files.storage import default_storage
 from django.views.decorators.http import require_POST
 from django.db.models import Q
@@ -13,13 +13,19 @@ import json
 # Renders buyer homepage
 @login_required
 def buyer_home(request):  
+    # Extra safety: clear cart if just checked out
+    if request.session.get('just_checked_out'):
+        request.session['cart'] = {}
+        request.session.modified = True
+        request.session.save()
+        del request.session['just_checked_out']
     products = Product.objects.all()
     return render(request, 'app/buyer.html', {'products': products})
 
 # Renders seller homepage
 @login_required
 def seller_home(request):
-    products = Product.objects.filter(seller=request.user)
+    products = Product.objects.all()
     return render(request, 'app/seller.html', {'products': products})
 
 # Renders role selection page
@@ -77,7 +83,25 @@ def checkout_page(request):
             'quantity': quantity
         })
         total += product.price * quantity
-    
+
+    # Handle order creation on POST
+    if request.method == 'POST' and items:
+        print('CHECKOUT: Creating orders for cart items:', items)
+        for item in items:
+            order = Order.objects.create(
+                product=item['product'],
+                buyer=request.user,
+                quantity=item['quantity']
+            )
+            print(f'CHECKOUT: Created order {order}')
+        # Clear the cart
+        request.session['cart'] = {}
+        request.session.modified = True
+        request.session.save()
+        request.session['just_checked_out'] = True
+        messages.success(request, 'Order placed successfully!')
+        return redirect('buyer')
+
     return render(request, 'app/checkout.html', {
         'cart_items': items,
         'total': total
@@ -284,3 +308,9 @@ def remove_from_cart(request, product_id):
         return JsonResponse({'status': 'success'})
     
     return JsonResponse({'status': 'error', 'message': 'Product not found in cart'})
+
+@login_required
+def seller_sales(request):
+    orders = Order.objects.filter(product__seller=request.user).select_related('product', 'buyer').order_by('-purchased_at')
+    print(f'SALES VIEW: Found {orders.count()} orders for seller {request.user.username}')
+    return render(request, 'app/seller_sales.html', {'orders': orders})

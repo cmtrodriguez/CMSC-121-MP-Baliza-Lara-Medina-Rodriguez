@@ -75,6 +75,24 @@
             margin-left: 2px;
             margin-bottom: 8px;
         }
+
+        .sales-btn {
+            display: inline-block;
+            margin-left: 16px;
+            padding: 10px 20px;
+            background-color: #07750b;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .sales-btn:hover {
+            background-color: #4CAF50;
+            color: #fff;
+        }
     </style>
 </head>
 
@@ -116,6 +134,7 @@
             <!-- Category Filter and Add Product Button -->
             <section class="category-filter-container">
                 <button class="add-btn" onclick="openAddProductModal()">Add Product</button>
+                <a href="{% url 'seller_sales' %}" class="sales-btn">View Sales</a>
                 <div class="filter-right">
                     <label for="category-filter">Category:</label>
                     <select id="category-filter" onchange="filterProducts()">
