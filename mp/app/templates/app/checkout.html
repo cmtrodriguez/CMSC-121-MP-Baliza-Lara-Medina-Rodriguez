@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,15 +9,17 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     <script src="{% static 'js/main.js' %}" defer></script>
     <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
-    
+
     <style>
         /* CHECKOUT */
         .CheckBody {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-image: url('https://img1.picmix.com/output/stamp/normal/2/0/2/9/2499202_e120b.gif'); /* Background image URL */
-            background-repeat: repeat; /* Make the image tile */
+            background-image: url('https://img1.picmix.com/output/stamp/normal/2/0/2/9/2499202_e120b.gif');
+            /* Background image URL */
+            background-repeat: repeat;
+            /* Make the image tile */
             color: black;
         }
 
@@ -59,7 +62,8 @@
             margin: 0 auto;
             text-align: left;
             border: 2px dashed #333;
-            font-family: 'Courier New', monospace; /* Simulates a receipt font */
+            font-family: 'Courier New', monospace;
+            /* Simulates a receipt font */
         }
 
         .receipt-title {
@@ -157,11 +161,12 @@
         }
     </style>
 </head>
+
 <body id="CheckBody">
     <div class="headerCheck">
-        <a href="/cart">  
+        <a href="/cart">
             <button class="back-iconCheck">
-                <span class="iconify" data-icon="material-symbols:arrow-back" data-inline="false"></span> 
+                <span class="iconify" data-icon="material-symbols:arrow-back" data-inline="false"></span>
             </button>
         </a>
         <div>checkout</div>
@@ -173,13 +178,25 @@
         <div class="receipt-container">
             <div class="receipt-title">CASH RECEIPT</div>
 
-            <!-- Dynamically populate receipt items -->
-            <div id="receipt-items"></div>
+            <!-- List each item in the cart -->
+            {% if cart_items %}
+            <div class="receipt-details">
+                <ul style="list-style: none; padding: 0; margin: 0;">
+                    {% for item in cart_items %}
+                    <li>
+                        {{ item.product.name }} x{{ item.quantity }} - Php {{ item.product.price|floatformat:2 }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% else %}
+            <div class="empty-cart-message">Your cart is empty.</div>
+            {% endif %}
 
             <div class="separator"></div>
 
             <div class="total-price">
-                <strong>Total:</strong> $<span id="total-price">0.00</span>
+                <strong>Total:</strong> Php {{ total|floatformat:2 }}
             </div>
 
             <div class="separator"></div>
@@ -203,10 +220,10 @@
                 <button class="payment-method" onclick="selectPaymentMethod('GCASH')">GCASH</button>
             </div>
 
-        <br>
+            <br>
             <h3>Enter Home Address</h3>
             <input type="text" id="address" class="address" placeholder="Enter your address" required>
-        </br>
+            </br>
         </div>
 
         <button class="checkout-btn" onclick="completePayment()">Complete Payment</button>
@@ -215,12 +232,13 @@
         function completePayment() {
             // Notify the user that the payment is completed
             alert("Payment Completed! Redirecting to the Buyer Page.");
-    
+
             // Redirect the user to the buyer page after a short delay
-            setTimeout(function() {
+            setTimeout(function () {
                 window.location.href = '/buyer';  // Redirect to the buyer page
             }, 2000); // 2-second delay to allow the user to see the notification
         }
     </script>
 </body>
+
 </html>
