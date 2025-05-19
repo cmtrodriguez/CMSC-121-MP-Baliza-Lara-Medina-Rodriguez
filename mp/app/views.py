@@ -311,6 +311,6 @@ def remove_from_cart(request, product_id):
 
 @login_required
 def seller_sales(request):
-    orders = Order.objects.filter(product__seller=request.user).select_related('product', 'buyer').order_by('-purchased_at')
-    print(f'SALES VIEW: Found {orders.count()} orders for seller {request.user.username}')
+    orders = Order.objects.all().select_related('product', 'buyer').order_by('-purchased_at')
+    print(f'SALES VIEW: Found {orders.count()} orders (all sellers)')
     return render(request, 'app/seller_sales.html', {'orders': orders})
