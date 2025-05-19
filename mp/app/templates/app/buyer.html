@@ -197,6 +197,24 @@
 
     <!-- Main content -->
     <div class="container">
+        <!-- Django messages -->
+        {% if messages %}
+        <div id="django-messages">
+            {% for message in messages %}
+            <div class="alert"
+                style="background: #e0ffe0; color: #006400; padding: 12px 20px; border-radius: 8px; margin: 16px 0; font-weight: bold; text-align: center;">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        <script>
+            setTimeout(function () {
+                var msg = document.getElementById('django-messages');
+                if (msg) { msg.style.display = 'none'; }
+            }, 3000);
+        </script>
+        {% endif %}
+
         <header>
             <div class="icons">
                 <button class="menu-btn" onclick="openMenu()">
