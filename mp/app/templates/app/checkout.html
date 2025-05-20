@@ -119,6 +119,12 @@
             background-color: #FF1A50;
         }
 
+        .payment-method.selected { /* Style for selected button */
+            background-color: #00FF00; /* Example: green background */
+            color: black;
+            border: 2px solid #000;
+        }
+
         .address {
             padding: 10px;
             width: 100%;
@@ -174,6 +180,13 @@
     </div>
 
     <div class="checkout-content">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
         <!-- Receipt Section -->
         <div class="receipt-container">
             <div class="receipt-title">CASH RECEIPT</div>
@@ -216,29 +229,22 @@
         <div class="payment-container">
             <h3>Choose Payment Method</h3>
             <div class="payment-options">
-                <button class="payment-method" type="button" onclick="selectPaymentMethod('COD')">Cash on
-                    Delivery</button>
-                <button class="payment-method" type="button" onclick="selectPaymentMethod('GCASH')">GCASH</button>
+                <button class="payment-method" type="button" data-method="COD">Cash on Delivery</button>
+                <button class="payment-method" type="button" data-method="GCASH">GCASH</button>
             </div>
 
             <br>
-            <h3>Enter Home Address</h3>
-            <input type="text" id="address" class="address" placeholder="Enter your address" required>
-            </br>
+            <form method="post" style="text-align:center;">
+                {% csrf_token %}
+                <input type="hidden" id="selected-payment-method" name="payment_method" value="">
+                <h3>Enter Home Address</h3>
+                <input type="text" id="address" class="address" placeholder="Enter your address" name="address">
+                <br></br>
+                <button class="checkout-btn" type="button">Complete Payment</button>
+            </form>
         </div>
-
-        <form method="post" style="text-align:center;">
-            {% csrf_token %}
-            <button class="checkout-btn" type="submit">Complete Payment</button>
-        </form>
     </div>
-    <script>
-        function selectPaymentMethod(method) {
-            // Optionally, you can store the selected payment method in a hidden input if needed
-            // document.getElementById('payment-method').value = method;
-            alert('Selected payment method: ' + method);
-        }
-    </script>
+    <script src="{% static 'js/checkout.js' %}"></script>
 </body>
 
 </html>

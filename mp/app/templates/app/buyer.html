@@ -13,6 +13,7 @@
     {% csrf_token %}
 
     <style>
+        /* Add style for main content area */
         .products {
             display: flex;
             justify-content: center;
@@ -186,10 +187,11 @@
     </style>
 </head>
 
-<body>
+<body >
     <!-- Sidebar Menu -->
     <div id="sideMenu" class="side-menu">
         <button class="close-btn" onclick="closeMenu()">&times;</button>
+        {# <a href="{% url 'buyer_orders' %}">Order History</a> #}
         <a href="{% url 'role_page' %}">Change Role</a>
         <a href="{% url 'logout' %}">Log Out</a>
     </div>
@@ -231,7 +233,6 @@
             <!-- Filter Section -->
             <section class="filter-section">
                 <div class="filter-container">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Search products...">
                     <div class="filter-group">
                         <label class="filter-label" for="price-range">Price Range:</label>
                         <select id="price-range" class="filter-select">
@@ -251,6 +252,9 @@
                             <option value="shorts">Shorts</option>
                             <option value="shirts">Shirts</option>
                         </select>
+                    </div>
+                    <div class="filter-group">
+                        <a href="{% url 'buyer_orders' %}" style="background-color: #fff; color: #006400; padding: 4px 10px; border-radius: 4px; text-decoration: none; font-size: 15px; height: 32px; display: flex; align-items: center;">Order History</a>
                     </div>
                 </div>
             </section>

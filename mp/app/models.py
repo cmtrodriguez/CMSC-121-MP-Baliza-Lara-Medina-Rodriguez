@@ -26,6 +26,8 @@ class Order(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     purchased_at = models.DateTimeField(auto_now_add=True)
+    address = models.TextField(blank=True, null=True)
+    payment_method = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
         return f"{self.product.name} bought by {self.buyer.username} (x{self.quantity})"

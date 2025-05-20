@@ -8,7 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seller Dashboard</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    <script src="{% static 'js/main.js' %}" defer></script>
     <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
@@ -96,7 +95,7 @@
     </style>
 </head>
 
-<body>
+<body >
     <!-- Sidebar Menu -->
     <div id="sideMenu" class="side-menu">
         <button class="close-btn" onclick="closeMenu()">&times;</button>
@@ -113,13 +112,13 @@
                 </button>
             </div>
             <div class="search-bar">
-                <input type="text" placeholder="Search" id="searchInput" onkeyup="filterProducts()" />
+                <input type="text" placeholder="Search" id="searchInput" />
             </div>
             <div class="icons">
-                <button class="message" onclick="toggleNotifications()">
+                <button class="message" onclick="sellerToggleNotifications()">
                     <span class="iconify" data-icon="mdi:message" data-inline="false"></span>
                 </button>
-                <button class="home" onclick="toggleHome()">
+                <button class="home" onclick="sellerToggleHome(this)" data-buyer-url="{% url 'buyer' %}">
                     <span class="iconify" data-icon="ic:baseline-home" data-inline="false"></span>
                 </button>
             </div>
@@ -388,6 +387,7 @@
             });
         }
     </script>
+    <script src="{% static 'js/main.js' %}" defer></script>
 </body>
 
 </html>

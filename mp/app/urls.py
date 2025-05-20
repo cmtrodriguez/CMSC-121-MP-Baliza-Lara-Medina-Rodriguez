@@ -23,4 +23,7 @@ urlpatterns = [
     path('cart/remove/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
 
     path('sales/', views.seller_sales, name='seller_sales'),
+
+    # Buyer Order History URL
+    path('buyer/orders/', views.buyer_orders, name='buyer_orders'),
 ]

@@ -13,6 +13,7 @@ import json
 # Renders buyer homepage
 @login_required
 def buyer_home(request):  
+    print(f"Logged in user's first name: {request.user.first_name}")
     # Extra safety: clear cart if just checked out
     if request.session.get('just_checked_out'):
         request.session['cart'] = {}
@@ -87,12 +88,27 @@ def checkout_page(request):
     # Handle order creation on POST
     if request.method == 'POST' and items:
         print('CHECKOUT: Creating orders for cart items:', items)
+
+        address = request.POST.get('address')
+        payment_method = request.POST.get('payment_method')
+
+        if not address:
+            messages.error(request, "Please provide a delivery address.")
+            return render(request, 'app/checkout.html', {'cart_items': items, 'total': total})
+
+        if not payment_method:
+            messages.error(request, "Please select a payment method.")
+            return render(request, 'app/checkout.html', {'cart_items': items, 'total': total})
+
         for item in items:
             order = Order.objects.create(
                 product=item['product'],
                 buyer=request.user,
-                quantity=item['quantity']
+                quantity=item['quantity'],
+                address=address,
+                # payment_method=payment_method # This will be handled by process_payment
             )
+            process_payment(request, payment_method, order) # Call the new function
             print(f'CHECKOUT: Created order {order}')
         # Clear the cart
         request.session['cart'] = {}
@@ -106,6 +122,16 @@ def checkout_page(request):
         'cart_items': items,
         'total': total
     })
+
+def process_payment(request, payment_method, order):
+    """
+    Handles the processing of the selected payment method.
+    This is a placeholder for more complex payment logic if needed.
+    """
+    # For now, we just assign the payment method to the order
+    order.payment_method = payment_method
+    order.save()
+    print(f'CHECKOUT: Payment method {payment_method} processed for order {order}')
 
 def signup(request):
     if request.method == "POST":
@@ -125,7 +151,15 @@ def signup(request):
             messages.error(request, "Email already registered.")
             return redirect('signup')
 
-        username = email
+        # Use the first name as the username, or email if first name is empty
+        username = first_name if first_name else email
+
+        # Ensure username is unique (append a number if necessary)
+        original_username = username
+        i = 1
+        while User.objects.filter(username=username).exists():
+            username = f"{original_username}{i}"
+            i += 1
 
         user = User.objects.create_user(
             username=username,
@@ -314,3 +348,9 @@ def seller_sales(request):
     orders = Order.objects.all().select_related('product', 'buyer').order_by('-purchased_at')
     print(f'SALES VIEW: Found {orders.count()} orders (all sellers)')
     return render(request, 'app/seller_sales.html', {'orders': orders})
+
+@login_required
+def buyer_orders(request):
+    """Renders the buyer's order history page."""
+    orders = Order.objects.filter(buyer=request.user).select_related('product').order_by('-purchased_at')
+    return render(request, 'app/buyer_orders.html', {'orders': orders})
