@@ -299,10 +299,17 @@
                 <p><b>Role: Buyer</b></p>
             </section>
 
+            <!-- Order History Button -->
+            <section
+                style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 10px; margin-top: -10px;">
+                <a href="{% url 'buyer_orders' %}" class="order-history-btn"
+                    style="background: #07750b; color: #fff; padding: 10px 22px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 15px; transition: background 0.2s;">Order
+                    History</a>
+            </section>
+
             <!-- Filter Section -->
             <section class="filter-section">
                 <div class="filter-container">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Search products...">
                     <div class="filter-group">
                         <label class="filter-label" for="price-range">Price Range:</label>
                         <select id="price-range" class="filter-select">

@@ -24,4 +24,7 @@ urlpatterns = [
 
     path('sales/', views.seller_sales, name='seller_sales'),
     path('seller/clear-sales/', views.clear_sales_history, name='clear_sales_history'),
+
+    # Buyer order history
+    path('buyer/orders/', views.buyer_orders, name='buyer_orders'),
 ]

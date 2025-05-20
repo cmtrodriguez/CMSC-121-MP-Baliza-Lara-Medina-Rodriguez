@@ -1,0 +1,113 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<a href="{% url 'buyer' %}">
+  <button class="back-icon-sales">
+    <span class="iconify" data-icon="material-symbols:arrow-back" data-inline="false"></span>
+  </button>
+</a>
+<div class="sales-container">
+  <h2 class="sales-title">Order History</h2>
+  <table class="sales-table">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Seller</th>
+        <th>Quantity</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td>{{ order.product.name }}</td>
+        <td>{{ order.product.seller.username }}</td>
+        <td>{{ order.quantity }}</td>
+        <td>{{ order.purchased_at|date:'Y-m-d H:i' }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4">No orders placed yet.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<style>
+  .sales-container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 32px 24px;
+  }
+
+  .sales-title {
+    color: #006400;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .sales-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #b6e900;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .sales-table th,
+  .sales-table td {
+    padding: 14px 10px;
+    text-align: left;
+  }
+
+  .sales-table th {
+    background: #006400;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .sales-table tr:nth-child(even) {
+    background: #eaffb6;
+  }
+
+  .sales-table tr:nth-child(odd) {
+    background: #fff;
+  }
+
+  .back-btn-sales {
+    display: inline-block;
+    margin-bottom: 18px;
+    padding: 8px 18px;
+    background: #006400;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    transition: background 0.2s;
+  }
+
+  .back-btn-sales:hover {
+    background: #4CAF50;
+    color: #fff;
+  }
+
+  .back-icon-sales {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    font-size: 30px;
+    color: black;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    z-index: 1000;
+    margin: 0;
+  }
+</style>
+{% endblock %}

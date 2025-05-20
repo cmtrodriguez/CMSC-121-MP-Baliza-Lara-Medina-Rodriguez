@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from .models import Product, Order
+from .models import Product, Order, CartItem
 from django.core.files.storage import default_storage
 from django.views.decorators.http import require_POST
 from django.db.models import Q
@@ -165,6 +165,13 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
+            # Load cart from CartItem model
+            cart_items = CartItem.objects.filter(user=user)
+            session_cart = {}
+            for item in cart_items:
+                session_cart[str(item.product.id)] = item.quantity
+            request.session['cart'] = session_cart
+            request.session.modified = True
             return redirect('role_page')
         else:
             messages.error(request, "Invalid email or password.")
@@ -173,6 +180,17 @@ def login_view(request):
     return render(request, 'app/login.html')
 
 def logout_view(request):
+    # Save session cart to CartItem model before logout
+    if request.user.is_authenticated:
+        cart = request.session.get('cart', {})
+        for product_id, quantity in cart.items():
+            product = Product.objects.filter(id=product_id).first()
+            if product:
+                cart_item, created = CartItem.objects.get_or_create(user=request.user, product=product)
+                cart_item.quantity = quantity
+                cart_item.save()
+        # Optionally, remove CartItems for this user that are not in the session cart
+        CartItem.objects.filter(user=request.user).exclude(product_id__in=cart.keys()).delete()
     logout(request)
     return redirect('login')
 
@@ -266,27 +284,32 @@ def delete_product(request, product_id):
 def add_to_cart(request, product_id):
     print(f"Adding product {product_id} to cart")
     print(f"Current session: {request.session.items()}")
-    
+
     if 'cart' not in request.session:
         request.session['cart'] = {}
         print("Initialized empty cart")
-    
+
     cart = request.session['cart']
     try:
         product = Product.objects.get(id=product_id)
         print(f"Found product: {product.name}")
-        
+
         if str(product_id) in cart:
             cart[str(product_id)] += 1
             print(f"Increased quantity to {cart[str(product_id)]}")
         else:
             cart[str(product_id)] = 1
             print(f"Added new item with quantity 1")
-        
+
         request.session['cart'] = cart
         request.session.modified = True
         print(f"Updated session cart: {request.session['cart']}")
-        
+
+        # Save to CartItem model
+        cart_item, created = CartItem.objects.get_or_create(user=request.user, product=product)
+        cart_item.quantity = cart[str(product_id)]
+        cart_item.save()
+
         return JsonResponse({'status': 'success'})
     except Product.DoesNotExist:
         print(f"Product {product_id} not found")
@@ -332,3 +355,9 @@ def clear_sales_history(request):
         Order.objects.filter(product__seller=request.user).delete()
         return redirect('/sales/?cleared=1')
     return redirect('seller_sales')
+
+@login_required
+def buyer_orders(request):
+    """Renders the buyer's order history page."""
+    orders = Order.objects.filter(buyer=request.user).select_related('product').order_by('-purchased_at')
+    return render(request, 'app/buyer_orders.html', {'orders': orders})

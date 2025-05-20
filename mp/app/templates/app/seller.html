@@ -123,6 +123,19 @@
         .sale-details strong {
             color: #FF3366;
         }
+
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            gap: 32px 24px;
+            margin-top: 32px;
+        }
+
+        .product {
+            width: 350px;
+            margin: 0 0 24px 0;
+        }
     </style>
 </head>
 
@@ -143,7 +156,7 @@
                 </button>
             </div>
             <div class="search-bar">
-                <input type="text" placeholder="Search" id="searchInput" onkeyup="filterProducts()" />
+                <input type="text" placeholder="Search" id="searchInput" />
             </div>
             <div class="icons">
                 <button class="message" onclick="toggleNotifications()">
@@ -359,7 +372,7 @@
                 const matchesSearch = name.includes(searchText);
                 const matchesCategory = categoryFilter === 'all' || category === categoryFilter;
 
-                product.style.display = matchesSearch && matchesCategory ? 'block' : 'none';
+                product.style.display = matchesSearch && matchesCategory ? 'flex' : 'none';
             }
         }
 
@@ -440,6 +453,16 @@
                 }
             });
         }
+
+        function filterSellerProducts() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const products = document.getElementsByClassName('product');
+            for (let product of products) {
+                const name = product.querySelector('.product-name').textContent.toLowerCase();
+                product.style.display = name.includes(searchText) ? 'flex' : 'none';
+            }
+        }
+        document.getElementById('searchInput').addEventListener('input', filterSellerProducts);
     </script>
 </body>
 
