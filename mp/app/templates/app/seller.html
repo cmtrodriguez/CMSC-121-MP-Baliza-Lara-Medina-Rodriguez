@@ -93,6 +93,36 @@
             background-color: #4CAF50;
             color: #fff;
         }
+
+        .sales-history {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #FFF;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .sales-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .sale-item {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .sale-details p {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+        .sale-details strong {
+            color: #FF3366;
+        }
     </style>
 </head>
 
@@ -166,6 +196,27 @@
                 </div>
                 {% endfor %}
             </section>
+
+            <!-- Remove the redundant sales history section -->
+            <!-- <div class="sales-history">
+                <h2>Sales History</h2>
+                <div class="sales-list">
+                    {% for order in orders %}
+                    <div class="sale-item">
+                        <div class="sale-details">
+                            <p><strong>Product:</strong> {{ order.product.name }}</p>
+                            <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+                            <p><strong>Total:</strong> Php {{ order.total_price|floatformat:2 }}</p>
+                            <p><strong>Date:</strong> {{ order.created_at|date:"F j, Y" }}</p>
+                            <p><strong>Payment Method:</strong> {{ order.payment_method }}</p>
+                            <p><strong>Address:</strong> {{ order.address }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p>No sales yet.</p>
+                    {% endfor %}
+                </div>
+            </div> -->
         </main>
     </div>
 

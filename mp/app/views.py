@@ -86,12 +86,23 @@ def checkout_page(request):
 
     # Handle order creation on POST
     if request.method == 'POST' and items:
+        payment_method = request.POST.get('payment_method')
+        address = request.POST.get('address')
+        if not payment_method or not address:
+            messages.error(request, 'Please select a payment method and enter your address to complete checkout.')
+            return render(request, 'app/checkout.html', {
+                'cart_items': items,
+                'total': total
+            })
         print('CHECKOUT: Creating orders for cart items:', items)
         for item in items:
             order = Order.objects.create(
                 product=item['product'],
                 buyer=request.user,
-                quantity=item['quantity']
+                quantity=item['quantity'],
+                payment_method=payment_method,
+                address=address,
+                total_price=item['product'].price * item['quantity']
             )
             print(f'CHECKOUT: Created order {order}')
         # Clear the cart
@@ -311,6 +322,13 @@ def remove_from_cart(request, product_id):
 
 @login_required
 def seller_sales(request):
-    orders = Order.objects.all().select_related('product', 'buyer').order_by('-purchased_at')
-    print(f'SALES VIEW: Found {orders.count()} orders (all sellers)')
-    return render(request, 'app/seller_sales.html', {'orders': orders})
+    orders = Order.objects.filter(product__seller=request.user).select_related('product', 'buyer').order_by('-purchased_at')
+    cleared = request.GET.get('cleared')
+    return render(request, 'app/seller_sales.html', {'orders': orders, 'cleared': cleared})
+
+@login_required
+def clear_sales_history(request):
+    if request.method == 'POST':
+        Order.objects.filter(product__seller=request.user).delete()
+        return redirect('/sales/?cleared=1')
+    return redirect('seller_sales')

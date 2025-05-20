@@ -7,26 +7,42 @@
 </a>
 <div class="sales-container">
   <h2 class="sales-title">Sales History</h2>
+  <div style="text-align:center; margin-bottom: 24px;">
+    <form method="post" action="{% url 'clear_sales_history' %}" style="display:inline;">
+      {% csrf_token %}
+      <button type="submit" id="clearHistoryBtn" class="clear-history-btn">Clear History</button>
+    </form>
+  </div>
+  {% if cleared %}
+  <div
+    style="background: #e0ffe0; color: #006400; padding: 12px 20px; border-radius: 8px; margin-bottom: 18px; font-weight: bold; text-align: center;">
+    Sales history cleared successfully.
+  </div>
+  {% endif %}
   <table class="sales-table">
     <thead>
       <tr>
         <th>Product</th>
-        <th>Buyer</th>
         <th>Quantity</th>
+        <th>Total</th>
         <th>Date</th>
+        <th>Payment Method</th>
+        <th>Address</th>
       </tr>
     </thead>
     <tbody>
       {% for order in orders %}
       <tr>
         <td>{{ order.product.name }}</td>
-        <td>{{ order.buyer.username }}</td>
         <td>{{ order.quantity }}</td>
-        <td>{{ order.purchased_at|date:'Y-m-d H:i' }}</td>
+        <td>Php {{ order.total_price|floatformat:2 }}</td>
+        <td>{{ order.purchased_at|date:"F j, Y, g:i a" }}</td>
+        <td>{{ order.payment_method }}</td>
+        <td>{{ order.address }}</td>
       </tr>
       {% empty %}
       <tr>
-        <td colspan="4">No sales yet.</td>
+        <td colspan="6" style="text-align:center; color:#888;">No sales yet.</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -46,6 +62,25 @@
     color: #006400;
     margin-bottom: 24px;
     text-align: center;
+    font-size: 2.2rem;
+    font-weight: 700;
+  }
+
+  .clear-history-btn {
+    padding: 12px 28px;
+    background-color: #FF3366;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    transition: background 0.2s;
+  }
+
+  .clear-history-btn:hover {
+    background: #ff1a50;
   }
 
   .sales-table {
@@ -54,6 +89,7 @@
     background: #b6e900;
     border-radius: 8px;
     overflow: hidden;
+    margin-top: 10px;
   }
 
   .sales-table th,
@@ -74,24 +110,6 @@
 
   .sales-table tr:nth-child(odd) {
     background: #fff;
-  }
-
-  .back-btn-sales {
-    display: inline-block;
-    margin-bottom: 18px;
-    padding: 8px 18px;
-    background: #006400;
-    color: #fff;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 16px;
-    transition: background 0.2s;
-  }
-
-  .back-btn-sales:hover {
-    background: #4CAF50;
-    color: #fff;
   }
 
   .back-icon-sales {

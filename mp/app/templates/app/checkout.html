@@ -213,31 +213,57 @@
         </div>
 
         <!-- Payment Section -->
-        <div class="payment-container">
-            <h3>Choose Payment Method</h3>
-            <div class="payment-options">
-                <button class="payment-method" type="button" onclick="selectPaymentMethod('COD')">Cash on
-                    Delivery</button>
-                <button class="payment-method" type="button" onclick="selectPaymentMethod('GCASH')">GCASH</button>
-            </div>
-
-            <br>
-            <h3>Enter Home Address</h3>
-            <input type="text" id="address" class="address" placeholder="Enter your address" required>
-            </br>
-        </div>
-
-        <form method="post" style="text-align:center;">
+        <form method="post" id="checkoutForm" style="text-align:center;">
             {% csrf_token %}
+            <div class="payment-container">
+                <h3>Choose Payment Method</h3>
+                <div class="payment-options">
+                    <button class="payment-method" type="button" id="btn-cod" onclick="selectPaymentMethod('COD')">Cash
+                        on Delivery</button>
+                    <button class="payment-method" type="button" id="btn-gcash"
+                        onclick="selectPaymentMethod('GCASH')">GCASH</button>
+                </div>
+                <br>
+                <h3>Enter Home Address</h3>
+                <input type="text" name="address" id="address" class="address" placeholder="Enter your address"
+                    required>
+            </div>
+            <input type="hidden" name="payment_method" id="payment-method" required>
             <button class="checkout-btn" type="submit">Complete Payment</button>
         </form>
     </div>
     <script>
-        function selectPaymentMethod(method) {
-            // Optionally, you can store the selected payment method in a hidden input if needed
-            // document.getElementById('payment-method').value = method;
-            alert('Selected payment method: ' + method);
-        }
+        // Ensure no global selectPaymentMethod interferes
+        document.addEventListener('DOMContentLoaded', function () {
+            let selectedPaymentMethod = '';
+            window.selectPaymentMethod = function (method) {
+                selectedPaymentMethod = method;
+                document.getElementById('payment-method').value = method;
+                // Remove highlight from both buttons
+                document.getElementById('btn-cod').style.backgroundColor = '#FF3366';
+                document.getElementById('btn-gcash').style.backgroundColor = '#FF3366';
+                // Highlight the selected button
+                if (method === 'COD') {
+                    document.getElementById('btn-cod').style.backgroundColor = '#4CAF50';
+                } else if (method === 'GCASH') {
+                    document.getElementById('btn-gcash').style.backgroundColor = '#4CAF50';
+                }
+            };
+            document.getElementById('checkoutForm').addEventListener('submit', function (e) {
+                const payment = document.getElementById('payment-method').value;
+                const address = document.getElementById('address').value.trim();
+                if (!payment) {
+                    alert('Please select a payment method.');
+                    e.preventDefault();
+                    return false;
+                }
+                if (!address) {
+                    alert('Please enter your address.');
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        });
     </script>
 </body>
 

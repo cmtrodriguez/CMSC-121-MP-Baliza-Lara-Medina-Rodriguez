@@ -5,7 +5,7 @@ function openMenu() {
 
 // Function to close the sidebar
 function closeMenu() {
-  document.getElementById("sideMenu").style.width = "0";  
+  document.getElementById("sideMenu").style.width = "0";
 }
 
 
@@ -38,16 +38,16 @@ function closeModal() {
 // Delete the selected product
 function deleteProduct() {
   if (currentProductId) {
-      // Example: Remove the product from your display
-      document.getElementById(`product-${currentProductId}`).remove(); 
-      
-      // Close the modal after deletion
-      closeModal();
+    // Example: Remove the product from your display
+    document.getElementById(`product-${currentProductId}`).remove();
+
+    // Close the modal after deletion
+    closeModal();
   }
 }
 
 // Handle form submission to update product details dynamically
-document.getElementById('editForm').addEventListener('submit', function(event) {
+document.getElementById('editForm').addEventListener('submit', function (event) {
   event.preventDefault();
 
   const productName = document.getElementById('product-name').value;
@@ -55,13 +55,13 @@ document.getElementById('editForm').addEventListener('submit', function(event) {
 
   // If the price doesn't contain a decimal, add .00
   if (!productPrice.includes('.')) {
-      productPrice += '.00';
+    productPrice += '.00';
   }
 
   if (currentProductId) {
-      // Update the product details immediately
-      document.getElementById(`product-name-${currentProductId}`).innerText = productName;
-      document.getElementById(`product-price-${currentProductId}`).innerText = `Php ${parseFloat(productPrice).toFixed(2)}`;
+    // Update the product details immediately
+    document.getElementById(`product-name-${currentProductId}`).innerText = productName;
+    document.getElementById(`product-price-${currentProductId}`).innerText = `Php ${parseFloat(productPrice).toFixed(2)}`;
   }
 
   // Close the modal after saving changes
@@ -71,21 +71,21 @@ document.getElementById('editForm').addEventListener('submit', function(event) {
 // ------------------------ IMAGE --------------------------- //
 // Preview the uploaded image
 function previewImage(event) {
-  const file = event.target.files[0]; 
+  const file = event.target.files[0];
 
   if (file) {
-      const reader = new FileReader();
-      
-      // When file is loaded, display it
-      reader.onload = function(e) {
-          const preview = document.getElementById('image-preview');
-          const previewContainer = document.getElementById('image-preview-container');
-          
-          preview.src = e.target.result; 
-          previewContainer.style.display = 'block'; 
-      }
+    const reader = new FileReader();
 
-      reader.readAsDataURL(file);
+    // When file is loaded, display it
+    reader.onload = function (e) {
+      const preview = document.getElementById('image-preview');
+      const previewContainer = document.getElementById('image-preview-container');
+
+      preview.src = e.target.result;
+      previewContainer.style.display = 'block';
+    }
+
+    reader.readAsDataURL(file);
   }
 }
 
@@ -112,10 +112,10 @@ function openAddModal() {
 }
 
 // Get the user's name from localStorage and display it
-window.onload = function() {
-  const userName = localStorage.getItem("username");  
+window.onload = function () {
+  const userName = localStorage.getItem("username");
   if (userName) {
-      document.getElementById("userName").innerText = userName;
+    document.getElementById("userName").innerText = userName;
   }
 }
 
@@ -133,7 +133,7 @@ function searchProducts(event) {
   event.preventDefault();
   const query = document.getElementById('searchInput').value.trim();
   if (query) {
-      window.location.href = `/search/?q=${encodeURIComponent(query)}`;
+    window.location.href = `/search/?q=${encodeURIComponent(query)}`;
   }
   return false;
 }
@@ -146,30 +146,30 @@ function filterByPrice() {
   const products = document.querySelectorAll('.product');
 
   products.forEach(product => {
-      const price = Number(product.getAttribute('data-price'));
-      
-      // Check if the product price is within the selected price range
-      if (price >= minPrice && price <= maxPrice) {
-          product.style.display = 'block'; 
-      } else {
-          product.style.display = 'none'; 
-      }
+    const price = Number(product.getAttribute('data-price'));
+
+    // Check if the product price is within the selected price range
+    if (price >= minPrice && price <= maxPrice) {
+      product.style.display = 'block';
+    } else {
+      product.style.display = 'none';
+    }
   });
 }
 
 // Function to filter products by category
 function filterProducts() {
-  const filterValue = document.getElementById('category-filter').value; 
-  const products = document.querySelectorAll('.product'); 
+  const filterValue = document.getElementById('category-filter').value;
+  const products = document.querySelectorAll('.product');
 
   products.forEach(product => {
-      const productCategory = product.getAttribute('data-category');
-      // If the selected category is 'all', show all products; otherwise, show products that match the selected category
-      if (filterValue === 'all' || filterValue === productCategory) {
-          product.style.display = 'block'; 
-      } else {
-          product.style.display = 'none'; 
-      }
+    const productCategory = product.getAttribute('data-category');
+    // If the selected category is 'all', show all products; otherwise, show products that match the selected category
+    if (filterValue === 'all' || filterValue === productCategory) {
+      product.style.display = 'block';
+    } else {
+      product.style.display = 'none';
+    }
   });
 }
 
@@ -177,7 +177,7 @@ function filterProducts() {
 document.getElementById('category-filter').addEventListener('change', filterProducts);
 
 // Initialize the filter when the page loads 
-window.onload = function() {
+window.onload = function () {
   filterProducts();
 }
 
@@ -187,72 +187,72 @@ window.onload = function() {
 var productToRemove;
 
 function increaseQuantity(productId) {
-    var inputField = document.getElementById('quantity-' + productId);
-    inputField.value = parseInt(inputField.value) + 1;
+  var inputField = document.getElementById('quantity-' + productId);
+  inputField.value = parseInt(inputField.value) + 1;
 }
 
 function decreaseQuantity(productId) {
-    var inputField = document.getElementById('quantity-' + productId);
-    if (parseInt(inputField.value) > 1) {
-        inputField.value = parseInt(inputField.value) - 1;
-    }
+  var inputField = document.getElementById('quantity-' + productId);
+  if (parseInt(inputField.value) > 1) {
+    inputField.value = parseInt(inputField.value) - 1;
+  }
 }
 
 function openRemoveModal(productId) {
-    productToRemove = productId;
-    document.getElementById('removeModal').style.display = 'block';
+  productToRemove = productId;
+  document.getElementById('removeModal').style.display = 'block';
 }
 
 function closeRemoveModal() {
-    document.getElementById('removeModal').style.display = 'none';
+  document.getElementById('removeModal').style.display = 'none';
 }
 
 function removeProduct() {
-    // Remove the product from the cart items container
-    var productElement = document.getElementById('product-' + productToRemove);
-    productElement.remove();
+  // Remove the product from the cart items container
+  var productElement = document.getElementById('product-' + productToRemove);
+  productElement.remove();
 
-    // Remove the product from localStorage
-    var cartData = JSON.parse(localStorage.getItem('cartData')) || [];
-    cartData = cartData.filter(item => item.id !== productToRemove);
-    localStorage.setItem('cartData', JSON.stringify(cartData));
+  // Remove the product from localStorage
+  var cartData = JSON.parse(localStorage.getItem('cartData')) || [];
+  cartData = cartData.filter(item => item.id !== productToRemove);
+  localStorage.setItem('cartData', JSON.stringify(cartData));
 
-    // Show message if cart is empty
-    if (cartData.length === 0) {
-        document.getElementById('cart-items').innerHTML = "<div class='empty-cart-message'>Your cart is empty!</div>";
-    }
+  // Show message if cart is empty
+  if (cartData.length === 0) {
+    document.getElementById('cart-items').innerHTML = "<div class='empty-cart-message'>Your cart is empty!</div>";
+  }
 
-    closeRemoveModal();
+  closeRemoveModal();
 }
 
 function saveCartAndProceed() {
-    var cartData = [
-        {
-            id: 1,
-            name: 'Product 1',
-            quantity: document.getElementById('quantity-1').value,
-            price: 30.00,
-        },
-        {
-            id: 2,
-            name: 'Product 2',
-            quantity: document.getElementById('quantity-2').value,
-            price: 20.00,
-        }
-    ];
+  var cartData = [
+    {
+      id: 1,
+      name: 'Product 1',
+      quantity: document.getElementById('quantity-1').value,
+      price: 30.00,
+    },
+    {
+      id: 2,
+      name: 'Product 2',
+      quantity: document.getElementById('quantity-2').value,
+      price: 20.00,
+    }
+  ];
 
-    // Save cart data in localStorage
-    localStorage.setItem('cartData', JSON.stringify(cartData));
+  // Save cart data in localStorage
+  localStorage.setItem('cartData', JSON.stringify(cartData));
 
-    // Proceed to checkout
-    window.location.href = '/checkout';
+  // Proceed to checkout
+  window.location.href = '/checkout';
 }
 
 // ------------------------ CHECKOUT --------------------------- //
 // Payment selection
-function selectPaymentMethod(method) {
-  alert('You selected ' + method + ' as the payment method. It has been noted.');
-}
+// function selectPaymentMethod(method) {
+//   alert('You selected ' + method + ' as the payment method. It has been noted.');
+// }
 
 
 // ------------------------ THINGS TO DO --------------------------- //
@@ -268,11 +268,11 @@ function selectPaymentMethod(method) {
 // SET UP THE DATABASE FOR EVERYTHING. ILL BE SENDING A GUIDE ON HOW TO INJECT POSTGRESQL SA GC//
 
 
-document.addEventListener('DOMContentLoaded', function() {
-    const logoutBtn = document.querySelector('.logout-btn');
-   
-    logoutBtn.addEventListener('click', function() {
-        alert('Logout clicked! Redirecting to login page...');
-    });
-   
+document.addEventListener('DOMContentLoaded', function () {
+  const logoutBtn = document.querySelector('.logout-btn');
+
+  logoutBtn.addEventListener('click', function () {
+    alert('Logout clicked! Redirecting to login page...');
+  });
+
 });

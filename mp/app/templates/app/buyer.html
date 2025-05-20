@@ -78,20 +78,38 @@
 
         .product-actions {
             display: flex;
-            gap: 10px;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .add-to-cart-btn,
+        .details-btn {
+            min-width: 110px;
+            font-size: 15px;
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s;
         }
 
         .add-to-cart-btn {
             background-color: #4CAF50;
             color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
         }
 
         .add-to-cart-btn:hover {
             background-color: #45a049;
+        }
+
+        .details-btn {
+            background: #FF3366;
+            color: #fff;
+        }
+
+        .details-btn:hover {
+            background: #ff1a50;
         }
 
         .cart-btn {
@@ -182,6 +200,41 @@
             .search-input {
                 max-width: 100%;
             }
+        }
+
+        .modal {
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: auto;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 32px 28px;
+            border-radius: 12px;
+            min-width: 320px;
+            max-width: 90vw;
+            box-shadow: 0 2px 12px rgba(0, 100, 0, 0.10);
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            font-size: 28px;
+            color: #FF3366;
+            cursor: pointer;
+            background: none;
+            border: none;
         }
     </style>
 </head>
@@ -290,11 +343,16 @@
                         {% endif %}
                         <div class="product-info">
                             <div class="product-name">{{ product.name }}</div>
-                            <div class="product-price">Php {{ product.price }}</div>
+                            <div class="product-price">Php {{ product.price|floatformat:2 }}</div>
                             <div class="product-description">{{ product.description }}</div>
                             <div class="product-actions">
                                 <button class="add-to-cart-btn" onclick="addToCart({{ product.id }})">Add to
                                     Cart</button>
+                                <button class="details-btn" data-name="{{ product.name|escapejs }}"
+                                    data-price="{{ product.price|floatformat:2 }}"
+                                    data-category="{{ product.category|escapejs }}"
+                                    data-seller="{{ product.seller.first_name|escapejs }} {{ product.seller.last_name|escapejs }}"
+                                    onclick="showDetailsModalFromButton(this)">Details</button>
                             </div>
                         </div>
                     </div>
@@ -302,6 +360,17 @@
                 </div>
             </section>
         </main>
+    </div>
+
+    <!-- Details Modal -->
+    <div id="detailsModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeDetailsModal()">&times;</span>
+            <h2 id="modalProductName"></h2>
+            <p><strong>Price:</strong> <span id="modalProductPrice"></span></p>
+            <p><strong>Category:</strong> <span id="modalProductCategory"></span></p>
+            <p><strong>Seller:</strong> <span id="modalProductSeller"></span></p>
+        </div>
     </div>
 
     <script>
@@ -377,6 +446,26 @@
         // Function to toggle home (placeholder)
         function toggleHome() {
             window.location.href = "{% url 'buyer' %}";
+        }
+
+        function showDetailsModal(name, price, category, seller) {
+            document.getElementById('modalProductName').innerText = name;
+            document.getElementById('modalProductPrice').innerText = 'Php ' + price;
+            document.getElementById('modalProductCategory').innerText = category.charAt(0).toUpperCase() + category.slice(1);
+            document.getElementById('modalProductSeller').innerText = seller;
+            document.getElementById('detailsModal').style.display = 'block';
+        }
+
+        function closeDetailsModal() {
+            document.getElementById('detailsModal').style.display = 'none';
+        }
+
+        function showDetailsModalFromButton(btn) {
+            const name = btn.getAttribute('data-name');
+            const price = btn.getAttribute('data-price');
+            const category = btn.getAttribute('data-category');
+            const seller = btn.getAttribute('data-seller');
+            showDetailsModal(name, price, category, seller);
         }
     </script>
 </body>
