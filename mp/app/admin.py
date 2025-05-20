@@ -1,11 +1,17 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
+from .models import Product, Order, CartItem
 
+<<<<<<< HEAD
 # Register your models here.
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from .models import Product, Order, CartItem
 
+=======
+>>>>>>> ef4a8409a53c2a24ca735d0f2e30ade2e55634b9
 # Register Product model
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -39,4 +45,8 @@ class CustomUserAdmin(UserAdmin):
 
 # Unregister the default UserAdmin and register our custom one
 admin.site.unregister(User)
+<<<<<<< HEAD
 admin.site.register(User, CustomUserAdmin)
+=======
+admin.site.register(User, CustomUserAdmin)
+>>>>>>> ef4a8409a53c2a24ca735d0f2e30ade2e55634b9
