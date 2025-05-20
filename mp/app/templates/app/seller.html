@@ -153,10 +153,12 @@
                         {% if product.image %}
                         <img src="{{ product.image.url }}" alt="{{ product.name }}">
                         {% endif %}
+                        {% if product.seller == request.user %}
                         <button class="edit-btn"
                             onclick="openEditProductModal('{{ product.id }}', '{{ product.name }}', '{{ product.price }}', '{{ product.category }}')">
                             <span class="iconify" data-icon="mdi:pencil"></span>
                         </button>
+                        {% endif %}
                     </div>
                     <div class="product-name">{{ product.name }}</div>
                     <div class="product-price">Php {{ product.price }}</div>
