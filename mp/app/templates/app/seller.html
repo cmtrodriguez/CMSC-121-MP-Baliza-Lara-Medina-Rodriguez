@@ -139,6 +139,68 @@
     </style>
 </head>
 
+<audio id="bg-music" loop preload="auto" style="display:none;">
+    <source src="{% static 'bgmusic.mp3' %}" type="audio/mp3">
+    Your browser does not support the audio element.
+</audio>
+
+<button id="music-toggle" style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 999;">Play Music</button>
+
+<button id="music-mute" style="
+    position: fixed;
+    bottom: 60px;
+    right: 20px;
+    padding: 8px 12px;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 999;">Mute</button>
+
+<input id="music-volume" type="range" min="0" max="1" step="0.01" value="1" style="
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    z-index: 999;
+    width: 120px;">
+
+<script>
+    const audio = document.getElementById('bg-music');
+    const toggleBtn = document.getElementById('music-toggle');
+    const muteBtn = document.getElementById('music-mute');
+    const volumeSlider = document.getElementById('music-volume');
+
+    toggleBtn.addEventListener('click', () => {
+        if (audio.paused) {
+            audio.play();
+            toggleBtn.textContent = "Pause Music";
+        } else {
+            audio.pause();
+            toggleBtn.textContent = "Play Music";
+        }
+    });
+
+    muteBtn.addEventListener('click', () => {
+        audio.muted = !audio.muted;
+        muteBtn.textContent = audio.muted ? "Unmute" : "Mute";
+    });
+
+    volumeSlider.addEventListener('input', () => {
+        audio.volume = volumeSlider.value;
+    });
+</script>
+
 <body>
     <!-- Sidebar Menu -->
     <div id="sideMenu" class="side-menu">
@@ -209,27 +271,6 @@
                 </div>
                 {% endfor %}
             </section>
-
-            <!-- Remove the redundant sales history section -->
-            <!-- <div class="sales-history">
-                <h2>Sales History</h2>
-                <div class="sales-list">
-                    {% for order in orders %}
-                    <div class="sale-item">
-                        <div class="sale-details">
-                            <p><strong>Product:</strong> {{ order.product.name }}</p>
-                            <p><strong>Quantity:</strong> {{ order.quantity }}</p>
-                            <p><strong>Total:</strong> Php {{ order.total_price|floatformat:2 }}</p>
-                            <p><strong>Date:</strong> {{ order.created_at|date:"F j, Y" }}</p>
-                            <p><strong>Payment Method:</strong> {{ order.payment_method }}</p>
-                            <p><strong>Address:</strong> {{ order.address }}</p>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <p>No sales yet.</p>
-                    {% endfor %}
-                </div>
-            </div> -->
         </main>
     </div>
 
@@ -452,6 +493,10 @@
                     alert('Error occurred while deleting product');
                 }
             });
+        }
+
+        function toggleNotifications() {
+            alert('Feature coming soon!');
         }
 
         function filterSellerProducts() {

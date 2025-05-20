@@ -3,7 +3,10 @@
 #loginBody {
   margin: 0;
   font-family: Inter, Arial;
-  background-color: #A2DD00;
+  background-image: url("https://pbs.twimg.com/media/GrVAwUEbAAM3REc?format=jpg&name=4096x4096");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 #container {
@@ -177,6 +180,7 @@
   position: absolute;
   left: 135px;
   top: 13px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 .menu-btn:hover {
@@ -316,7 +320,7 @@ button {
 
 body {
   font-family: Inter, Arial, Helvetica, sans-serif;
-  background-color: #A2DD00; 
+  background-image: url("https://pbs.twimg.com/media/GrWgtFlbgAAyOYZ?format=jpg&name=large");
 }
 
 .container {
@@ -329,13 +333,18 @@ header {
   display: flex;
   justify-content: space-between;
   padding: 20px;
-  background-color: #A2DD00;
+  background-image: url("https://pbs.twimg.com/media/GrWgtFlbgAAyOYZ?format=jpg&name=large");
+  background-color: transparent;
 }
 
 .search-bar {
   flex-grow: 1;
   margin: 0 20px;
   width: 300px;
+  text-shadow:
+  2px 2px 2px #000,    
+  4px 4px 4px #222,    
+  6px 6px 6px #444;  
 }
 
 .search-bar input {
@@ -352,7 +361,7 @@ header {
   font-size: 30px;
   color: white;
   margin-left: 10px;
-  cursor: pointer; /* Make the cart and bell clickable */
+  cursor: pointer; 
 }
 
 .message, .cart {
@@ -386,17 +395,26 @@ header {
 }
 
 .welcome {
-  color: white;
+  color: rgb(255, 255, 255);
   margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  text-shadow:
+  2px 2px 2px #000,    
+  4px 4px 4px #222,    
+  6px 6px 6px #444;     
+  font-size: larger;
 }
 
 .username {
   text-decoration: none;
-  color: white;
+  color: rgb(255, 255, 255);
   font-weight: bold;
+  text-shadow:
+  2px 2px 2px #000,    
+  4px 4px 4px #222,    
+  6px 6px 6px #444;    
 }
 
 .products {
@@ -570,20 +588,26 @@ outline-offset: 2px;
 
 .role-selection {
   font-family: Arial, sans-serif;
-  background-color: #A2DD00; 
+  background-image: url("https://pbs.twimg.com/media/GrWiolybEAA6lMg?format=jpg&name=large");
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   margin: 0;
   flex-direction: column; 
+  color: white;
+  text-shadow:
+  2px 2px 2px #000,     /* soft base shadow */
+  4px 4px 4px #222,     /* deeper layer */
+  6px 6px 6px #444;     /* even deeper */
 }
 
 .containerRole {
   text-align: center;
   padding: 20px;
-  background-color: #A2DD00; 
-  border-radius: 15px;
+  background-color: transparent; 
+  border: none;                  
+  padding: 0;                   
   width: 80%;
   max-width: 500px;
 }
@@ -638,16 +662,16 @@ outline-offset: 2px;
 
  /* Error message styling */
   .error-messages {
-    background-color: #f8d7da;  /* Light red background */
-    color: #721c24;  /* Dark red text */
-    border: 1px solid #f5c6cb;  /* Light red border */
-    border-radius: 5px;  /* Rounded corners */
+    background-color: #f8d7da;  
+    color: #721c24;  
+    border: 1px solid #f5c6cb;  
+    border-radius: 5px; 
     padding: 10px;
     margin-bottom: 20px;
     font-size: 16px;
   }
  
   .error-messages p {
-    margin: 0;  /* Remove extra space between messages */
-    font-weight: bold;  /* Make the text bold */
+    margin: 0;  
+    font-weight: bold;  
   }

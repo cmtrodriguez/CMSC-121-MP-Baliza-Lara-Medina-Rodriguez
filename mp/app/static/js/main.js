@@ -248,26 +248,6 @@ function saveCartAndProceed() {
   window.location.href = '/checkout';
 }
 
-// ------------------------ CHECKOUT --------------------------- //
-// Payment selection
-// function selectPaymentMethod(method) {
-//   alert('You selected ' + method + ' as the payment method. It has been noted.');
-// }
-
-
-// ------------------------ THINGS TO DO --------------------------- //
-// Make other buttons work
-// Make sure that the producst will only display if the seller adds a product
-// The products there are just placeholders
-// Category button is working but the product's edit model isn't reflecting to the set category (eg. the set category is shorts but when clicked edit button the category is saying that it's pajama) 
-// Same  with buyer page, the products added by the must be displayed
-// makethe SELLER and BUYER page buttons functional
-// make sure that the images can be reflected in the products
-// Make the search engine work
-// For the checkout and add to cart we only placed placeholders, make the buyer's product buttons connect with add to cart and checkout
-// SET UP THE DATABASE FOR EVERYTHING. ILL BE SENDING A GUIDE ON HOW TO INJECT POSTGRESQL SA GC//
-
-
 document.addEventListener('DOMContentLoaded', function () {
   const logoutBtn = document.querySelector('.logout-btn');
 

@@ -7,20 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+39&display=swap" rel="stylesheet">
     <script src="{% static 'js/main.js' %}" defer></script>
     <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
 
     <style>
-        /* CHECKOUT */
         .CheckBody {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-image: url('https://img1.picmix.com/output/stamp/normal/2/0/2/9/2499202_e120b.gif');
-            /* Background image URL */
             background-repeat: repeat;
-            /* Make the image tile */
-            color: black;
+            color: rgb(255, 255, 255);
         }
 
         .headerCheck {
@@ -63,7 +61,6 @@
             text-align: left;
             border: 2px dashed #333;
             font-family: 'Courier New', monospace;
-            /* Simulates a receipt font */
         }
 
         .receipt-title {
@@ -146,11 +143,11 @@
         }
 
         .barcode {
-            font-size: 16px;
+            font-family: 'Libre Barcode 39', cursive;
+            font-size: 48px;
             text-align: center;
             margin-top: 20px;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 3px;
+            letter-spacing: 0;
         }
 
         .empty-cart-message {
@@ -202,7 +199,7 @@
             <div class="separator"></div>
 
             <div class="barcode">
-                1234567890123456789012345678901234567890
+                *1234567890123456789012345*
             </div>
 
             <div class="separator"></div>
@@ -216,7 +213,13 @@
         <form method="post" id="checkoutForm" style="text-align:center;">
             {% csrf_token %}
             <div class="payment-container">
-                <h3>Choose Payment Method</h3>
+                <h3 style="
+                    color: #FFF;
+                      text-shadow:
+                        2px 2px 2px #000,    
+                        4px 4px 4px #222,    
+                        6px 6px 6px #444;  
+                        ">Choose Payment Method</h3>
                 <div class="payment-options">
                     <button class="payment-method" type="button" id="btn-cod" onclick="selectPaymentMethod('COD')">Cash
                         on Delivery</button>
@@ -224,7 +227,13 @@
                         onclick="selectPaymentMethod('GCASH')">GCASH</button>
                 </div>
                 <br>
-                <h3>Enter Home Address</h3>
+                <h3 style="
+                    color: #FFF;
+                      text-shadow:
+                        2px 2px 2px #000,    
+                        4px 4px 4px #222,    
+                        6px 6px 6px #444;  
+                        ">Enter Home Address</h3>
                 <input type="text" name="address" id="address" class="address" placeholder="Enter your address"
                     required>
             </div>
@@ -239,6 +248,7 @@
             window.selectPaymentMethod = function (method) {
                 selectedPaymentMethod = method;
                 document.getElementById('payment-method').value = method;
+                
                 // Remove highlight from both buttons
                 document.getElementById('btn-cod').style.backgroundColor = '#FF3366';
                 document.getElementById('btn-gcash').style.backgroundColor = '#FF3366';

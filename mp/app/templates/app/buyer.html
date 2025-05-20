@@ -236,8 +236,86 @@
             background: none;
             border: none;
         }
+
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .carousel-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            transition: opacity 0.5s ease-in-out;
+            border-radius: 10px;
+        }
     </style>
 </head>
+
+<audio id="bg-music" loop preload="auto" style="display:none;">
+    <source src="{% static 'bgmusic.mp3' %}" type="audio/mp3">
+    Your browser does not support the audio element.
+</audio>
+
+<button id="music-toggle" style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 999;">Play Music</button>
+
+<button id="music-mute" style="
+    position: fixed;
+    bottom: 60px;
+    right: 20px;
+    padding: 8px 12px;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 999;">Mute</button>
+
+<input id="music-volume" type="range" min="0" max="1" step="0.01" value="1" style="
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    z-index: 999;
+    width: 120px;">
+
+<script>
+    const audio = document.getElementById('bg-music');
+    const toggleBtn = document.getElementById('music-toggle');
+    const muteBtn = document.getElementById('music-mute');
+    const volumeSlider = document.getElementById('music-volume');
+
+    toggleBtn.addEventListener('click', () => {
+        if (audio.paused) {
+            audio.play();
+            toggleBtn.textContent = "Pause Music";
+        } else {
+            audio.pause();
+            toggleBtn.textContent = "Play Music";
+        }
+    });
+
+    muteBtn.addEventListener('click', () => {
+        audio.muted = !audio.muted;
+        muteBtn.textContent = audio.muted ? "Unmute" : "Mute";
+    });
+
+    volumeSlider.addEventListener('input', () => {
+        audio.volume = volumeSlider.value;
+    });
+</script>
 
 <body>
     <!-- Sidebar Menu -->
@@ -246,7 +324,6 @@
         <a href="{% url 'role_page' %}">Change Role</a>
         <a href="{% url 'logout' %}">Log Out</a>
     </div>
-
 
     <!-- Main content -->
     <div class="container">
@@ -299,6 +376,15 @@
                 <p><b>Role: Buyer</b></p>
             </section>
 
+            <!-- Carousel Section -->
+            <section class="carousel-section" style="margin: 20px auto; max-width: 1500px;">
+                <div class="carousel-container">
+                <img src="https://pbs.twimg.com/media/GrXIyy3bAAMjeVU?format=jpg&name=large" class="carousel-image" style="display:block;" />
+                <img src="https://pbs.twimg.com/media/GrXIyy0bAAMkGGh?format=jpg&name=large" class="carousel-image" style="display:none;" />
+                <img src="https://pbs.twimg.com/media/GrXIyyybMAAhR7H?format=png&name=large" class="carousel-image" style="display:none;" />
+                </div>
+            </section>
+
             <!-- Order History Button -->
             <section
                 style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 10px; margin-top: -10px;">
@@ -331,6 +417,11 @@
                         </select>
                     </div>
                 </div>
+                <div style="text-align: right; margin-top: 10px;">
+            <button onclick="resetFilters()" style="background-color: transparent; color: white; padding: 6px 14px; border: none; border-radius: 6px; cursor: pointer;">
+                Reset Filters
+            </button>
+        </div>
             </section>
 
 
@@ -445,12 +536,12 @@
             });
         }
 
-        // Function to toggle notifications (placeholder)
+        // Function to toggle notifications 
         function toggleNotifications() {
-            alert('Notifications feature coming soon!');
+            alert('Feature coming soon!');
         }
 
-        // Function to toggle home (placeholder)
+        // Function to toggle home 
         function toggleHome() {
             window.location.href = "{% url 'buyer' %}";
         }
@@ -474,6 +565,24 @@
             const seller = btn.getAttribute('data-seller');
             showDetailsModal(name, price, category, seller);
         }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('price-range').value = '';
+            filterProducts();
+        }
+
+        let currentCarouselIndex = 0;
+        const carouselImages = document.querySelectorAll('.carousel-image');
+
+        function showNextCarouselImage() {
+            carouselImages[currentCarouselIndex].style.display = 'none';
+            currentCarouselIndex = (currentCarouselIndex + 1) % carouselImages.length;
+            carouselImages[currentCarouselIndex].style.display = 'block';
+        }
+
+        setInterval(showNextCarouselImage, 4000);
     </script>
 </body>
 
