@@ -19,3 +19,9 @@ Our group developed a fully functional online thrift store (using Django, HTML, 
 - New users can register for either a buyer or seller account.
 - Returning users can log in to access their respective dashboards and functionalities.
 - Secure session handling ensures authenticated access throughout the site.
+
+5. Product Categories
+- Seller-Side: Ability to assign categories (e.g., Electronics, Clothing, Books) when listing products.
+- Buyer-Side: Buyers can view items by category or from the All Products section.
+
+6. Filter Functionality: Users can filter products by price range and/or category, improving the shopping experience.
